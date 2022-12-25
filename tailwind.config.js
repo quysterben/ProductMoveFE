@@ -10,10 +10,11 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: { // add new font family
-        montserrat: ['Montserrat', 'sans-serif']
+        montserrat: ['Montserrat', 'sans-serif'],
+        poppins: 'Poppins'
       },
       backgroundImage: {
-        'signIn': "url('../public/images/background-signin.png')",
+        'signIn': "url('../public/images/background-signin.jpg')",
       },
     },
     colors: { // custom color palette
@@ -30,8 +31,14 @@ module.exports = {
       grey1: '#A0AABF',
       grey2: '#C0C6D4',
       grey3: '#E3E8F1',
+      grey4: '#e8e1d1',
+      grey5: '#EAEAEA',
       light: '#F9FBFC',
       white: '#FFF',
+      custom1: '#8693AB',
+      custom2: '#BDD4E7',
+      transparent: 'transparent'
+      
     }
   },
   plugins: [],
