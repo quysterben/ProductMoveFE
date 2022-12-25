@@ -1,9 +1,15 @@
-import { AUTH } from '../type';
+import { AUTH } from '../types';
+
+// Ban điều hành : excutive
+// Cơ sở sản xuất : production
+// Đại lý : distribution
+// Bảo hành : warranty
 
 const initialState = {
+    loggedIn: true,
     email: 'quysterben@gmail.com',
     name: 'Sterben',
-    role: 4,
+    role: 'excutive',
 };
 
 const authReducer = (state = initialState, action) => {

@@ -1,6 +1,15 @@
 import Navbar from '~/components/Navbar';
+import { useRouter } from 'next/router';
 
 const pending = () => {
+    const router = useRouter();
+
+    useEffect(() => {
+        if (auth.loggedIn === false) {
+            router.push('/login');
+        }
+    }, [router]);
+
     return (
         <div>
             <Navbar />
