@@ -1,13 +1,21 @@
-import { Button } from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
-import Navbar from '~/components/Navbar';
+import { useRouter } from 'next/router';
+import { useEffect } from 'react';
 
 const Home = () => {
-    return (
-        <div>
-            <Navbar />
-        </div>
-    );
+    const { auth } = useSelector((state) => state);
+    const dispatch = useDispatch();
+    const router = useRouter();
+
+    useEffect(() => {
+        if (auth.loggedIn === false) {
+            router.push('/login');
+        } else {
+            router.push(`/${auth.role}/statistics/`);
+        }
+    }, [router]);
+
+    return <div></div>;
 };
 
 export default Home;

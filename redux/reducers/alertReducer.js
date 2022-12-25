@@ -1,4 +1,4 @@
-import { ALERT } from '../type';
+import { ALERT } from '../types';
 
 const initialState = {
     loading: false,
