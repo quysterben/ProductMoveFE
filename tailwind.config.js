@@ -18,6 +18,15 @@ module.exports = {
             backgroundImage: {
                 signIn: "url('../public/images/background-signin.jpg')",
             },
+            width: {
+                '500': '500px',
+            },
+            height: {
+                '680': '680px',
+            }
+        },
+        screens: {
+            'phone': '500px'
         },
         colors: {
             // custom color palette
@@ -44,6 +53,7 @@ module.exports = {
             color1: '#EEEEEE',
             custom1: '#8693AB',
             custom2: '#BDD4E7',
+            red1: '#f14b2f',
             transparent: 'transparent'
     },
     },
