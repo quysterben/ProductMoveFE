@@ -7,7 +7,6 @@ import { Button } from 'antd';
 import { FaWarehouse } from 'react-icons/fa';
 import Link from 'next/link';
 import { logout } from '~/redux/actions/authAction';
-import { useRouter } from 'next/router';
 
 const Navbar = () => {
     const { auth } = useSelector((state) => state);
@@ -31,7 +30,7 @@ const Navbar = () => {
                             <p className="text-color1 w-full text-center">Staff</p>
                         </li>
                         <li className="mx-16 hover:cursor-pointer w-[80px]  hover:bg-color3">
-                            <Link href="/executive/category">
+                            <Link href="/executive/model">
                                 <MdCategory className="text-color1 h-8 w-8 mt-2 ml-6 hover:text-color1" />
                             </Link>
                             <p className="text-color1 w-full text-center">Model</p>
@@ -54,124 +53,106 @@ const Navbar = () => {
                     </Button>
                 </>,
             );
-        } else if (auth.role === 2) {
-            setHtml(
-                <>
-                    <h1 className="text-color4 ml-8 mr-10">Logo</h1>
-                    <ul className="w-full flex justify-center">
-                        <li className="mx-16">
-                            <Link href="/distribution/warehouse">
-                                <FaWarehouse
-                                    className="text-color5 h-8 w-8 hover:text-color4 
-                                hover:cursor-pointer"
-                                />
-                            </Link>
-                        </li>
-                        <li className="mx-16">
-                            <Link href="/distribution/pending">
-                                <MdPendingActions
-                                    className="text-color5 h-8 w-8 hover:text-color4 
-                            hover:cursor-pointer"
-                                />
-                            </Link>
-                        </li>
-                        <li className="mx-16">
-                            <Link href="/distribution/statistics">
-                                <ImStatsDots
-                                    className="text-color5 h-8 w-8 hover:text-color4 
-                            hover:cursor-pointer"
-                                />
-                            </Link>
-                        </li>
-                    </ul>
-                    <h3 className="text-color4 mx-6">{auth.name}</h3>
-                    <Button
-                        type="primary"
-                        className="inline-block mr-10 border-color5 bg-color1 
-                    hover:bg-color2 "
-                    >
-                        Logout
-                    </Button>
-                </>,
-            );
-        } else if (auth.role === 3) {
-            setHtml(
-                <>
-                    <h1 className="text-color4 ml-8 mr-10">Logo</h1>
-                    <ul className="w-full flex justify-center">
-                        <li className="mx-16">
-                            <Link href="/production/warehouse">
-                                <FaWarehouse
-                                    className="text-color5 h-8 w-8 hover:text-color4 
-                                hover:cursor-pointer"
-                                />
-                            </Link>
-                        </li>
-                        <li className="mx-16">
-                            <Link href="/production/pending">
-                                <MdPendingActions
-                                    className="text-color5 h-8 w-8 hover:text-color4 
-                            hover:cursor-pointer"
-                                />
-                            </Link>
-                        </li>
-                        <li className="mx-16">
-                            <Link href="/production/statistics">
-                                <ImStatsDots
-                                    className="text-color5 h-8 w-8 hover:text-color4 
-                            hover:cursor-pointer"
-                                />
-                            </Link>
-                        </li>
-                    </ul>
-                    <h3 className="text-color4 mx-6">{auth.name}</h3>
-                    <Button
-                        type="primary"
-                        className="inline-block mr-10 border-color5 bg-color1 
-                    hover:bg-color2 "
-                    >
-                        Logout
-                    </Button>
-                </>,
-            );
-        } else if (auth.role === 4) {
+        } else if (auth.user.role === 'distribution') {
             setHtml(
                 <>
                     <h1 className="text-color1 ml-8 mr-10">Logo</h1>
                     <ul className="w-full flex justify-center">
-                        <li className="mx-16 hover:cursor-pointer w-[80px]">
-                            <Link href="/warranty/warranting">
-                                <HiWrenchScrewdriver
-                                    className="text-color1 h-8 w-8 mt-2 ml-6 hover:text-color1 
-                            "
-                                />
+                        <li className="mx-16 hover:cursor-pointer w-[80px] hover:bg-color3">
+                            <Link href="/distribution/warehouse">
+                                <FaWarehouse className="text-color1 h-8 w-8 mt-2 ml-6 hover:text-color1" />
                             </Link>
-                            <p className="text-color1 w-full text-center">Warranting</p>
+                            <p className="text-color1 w-full text-center">Warehouse</p>
                         </li>
-                        <li className="mx-16 hover:cursor-pointer w-[80px]">
-                            <Link href="/warranty/pending">
-                                <MdPendingActions
-                                    className="text-color1 h-8 w-8 mt-2 ml-6 hover:text-color1 
-                            hover:cursor-pointer"
-                                />
+                        <li className="mx-16 hover:cursor-pointer w-[80px] hover:bg-color3">
+                            <Link href="/distribution/pending">
+                                <MdPendingActions className="text-color1 h-8 w-8 mt-2 ml-6 hover:text-color1" />
                             </Link>
                             <p className="text-color1 w-full text-center">Pending</p>
                         </li>
-                        <li className="mx-16 hover:cursor-pointer w-[80px]">
-                            <Link href="/warranty/statistics">
-                                <ImStatsDots
-                                    className="text-color1 h-8 w-8 mt-2 ml-6 hover:text-color1 
-                            hover:cursor-pointer"
-                                />
+                        <li className="mx-16 hover:cursor-pointer w-[80px] hover:bg-color3">
+                            <Link href="/distribution/statistics">
+                                <ImStatsDots className="text-color1 h-8 w-8 mt-2 ml-6 hover:text-color1" />
                             </Link>
                             <p className="text-color1 w-full text-center">Statistics</p>
                         </li>
                     </ul>
-                    <h3 className="text-color1 mx-6">{auth.name}</h3>
+                    <h3 className="text-color1 mx-6">{auth.user.name}</h3>
                     <Button
                         type="primary"
                         className="inline-block mr-10 border-color1 bg-color3 
                     hover:bg-color1 hover:text-color4"
+                        onClick={(e) => handleLogout(e)}
+                    >
+                        Logout
+                    </Button>
+                </>,
+            );
+        } else if (auth.user.role === 'production') {
+            setHtml(
+                <>
+                    <h1 className="text-color1 ml-8 mr-10">Logo</h1>
+                    <ul className="w-full flex justify-center">
+                        <li className="mx-16 hover:cursor-pointer w-[80px] hover:bg-color3">
+                            <Link href="/production/warehouse">
+                                <FaWarehouse className="text-color1 h-8 w-8 mt-2 ml-6 hover:text-color1" />
+                            </Link>
+                            <p className="text-color1 w-full text-center">Warehouse</p>
+                        </li>
+                        <li className="mx-16 hover:cursor-pointer w-[80px] hover:bg-color3">
+                            <Link href="/production/pending">
+                                <MdPendingActions className="text-color1 h-8 w-8 mt-2 ml-6 hover:text-color1" />
+                            </Link>
+                            <p className="text-color1 w-full text-center">Pending</p>
+                        </li>
+                        <li className="mx-16 hover:cursor-pointer w-[80px] hover:bg-color3">
+                            <Link href="/production/statistics">
+                                <ImStatsDots className="text-color1 h-8 w-8 mt-2 ml-6 hover:text-color1" />
+                            </Link>
+                            <p className="text-color1 w-full text-center">Statistics</p>
+                        </li>
+                    </ul>
+                    <h3 className="text-color1 mx-6">{auth.user.name}</h3>
+                    <Button
+                        type="primary"
+                        className="inline-block mr-10 border-color1 bg-color3 
+                    hover:bg-color1 hover:text-color4"
+                        onClick={(e) => handleLogout(e)}
+                    >
+                        Logout
+                    </Button>
+                </>,
+            );
+        } else if (auth.user.role === 'warranty') {
+            setHtml(
+                <>
+                    <h1 className="text-color1 ml-8 mr-10">Logo</h1>
+                    <ul className="w-full flex justify-center">
+                        <li className="mx-16 hover:cursor-pointer w-[80px] hover:bg-color3">
+                            <Link href="/warranty/warranting">
+                                <HiWrenchScrewdriver className="text-color1 h-8 w-8 mt-2 ml-6 hover:text-color1" />
+                            </Link>
+                            <p className="text-color1 w-full text-center">Warranting</p>
+                        </li>
+                        <li className="mx-16 hover:cursor-pointer w-[80px] hover:bg-color3">
+                            <Link href="/warranty/pending">
+                                <MdPendingActions className="text-color1 h-8 w-8 mt-2 ml-6 hover:text-color1" />
+                            </Link>
+                            <p className="text-color1 w-full text-center">Pending</p>
+                        </li>
+                        <li className="mx-16 hover:cursor-pointer w-[80px] hover:bg-color3">
+                            <Link href="/warranty/statistics">
+                                <ImStatsDots className="text-color1 h-8 w-8 mt-2 ml-6 hover:text-color1" />
+                            </Link>
+                            <p className="text-color1 w-full text-center">Statistics</p>
+                        </li>
+                    </ul>
+                    <h3 className="text-color1 mx-6">{auth.user.name}</h3>
+                    <Button
+                        type="primary"
+                        className="inline-block mr-10 border-color1 bg-color3 
+                    hover:bg-color1 hover:text-color4"
+                        onClick={(e) => handleLogout(e)}
                     >
                         Logout
                     </Button>

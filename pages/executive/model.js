@@ -3,9 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 
-const statistics = () => {
-    const { auth } = useSelector((state) => state);
-    const dispatch = useDispatch();
+const model = () => {
     const router = useRouter();
 
     useEffect(() => {
@@ -19,10 +17,10 @@ const statistics = () => {
         <div>
             <Navbar></Navbar>
             <div className="pt-[88px]">
-                <h2>statistics</h2>
+                <h2>model</h2>
             </div>
         </div>
     );
 };
 
-export default statistics;
+export default model;

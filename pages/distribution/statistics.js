@@ -1,14 +1,17 @@
 const { default: Navbar } = require('~/components/Navbar');
 import { useRouter } from 'next/router';
+import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
 const statistics = () => {
     const router = useRouter();
+    const { auth } = useSelector((state) => state);
 
     useEffect(() => {
-        if (auth.loggedIn === false) {
-            router.push('/login');
-        }
-    }, [router]);
+        // if (loggedIn === false) {
+        //     router.push('/login');
+        // }
+    }, []);
 
     return (
         <div>
