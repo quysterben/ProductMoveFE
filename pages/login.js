@@ -10,12 +10,12 @@ import { useRouter } from 'next/router';
 const Login = () => {
     return (
         <div className="bg-signIn bg-cover w-screen h-screen flex flex-col justify-center items-center ">
-            {mainLogin()}
+            <MainLogin/>
         </div>
     );
 };
 
-const mainLogin = () => {
+const MainLogin = () => {
     const dispatch = useDispatch();
     const router = useRouter();
     const userEl = useRef('');
@@ -30,6 +30,10 @@ const mainLogin = () => {
             router.replace(`/`);
         }
     }, []);
+
+    const removeErr = (e) => {
+        e.target.nextElementSibling.innerHTML = ""
+    }
 
     const submitForm = (event) => {
         event.preventDefault();
@@ -54,12 +58,12 @@ const mainLogin = () => {
             return true;
         }
     };
-
+    // w-11/12 phone:w-500 mr-10 ml-10
     return (
         <div className="container w-full h-full flex items-center justify-center">
             <form
                 onSubmit={submitForm}
-                className="w-1/3 h-5/6 pt-12 flex flex-col items-center bg-gradient-to-tr from-custom1/95 to-custom2/95 rounded-3xl"
+                className="w-11/12 phone:w-500 h-680 pt-12 flex flex-col items-center bg-gradient-to-tr from-custom1/95 to-custom2/95 rounded-3xl sm:"
             >
                 <span>
                     <Image
@@ -71,35 +75,37 @@ const mainLogin = () => {
                 </span>
 
                 <span>
-                    <h2 className="mt-8 text-3xl font-poppins text-white font-bold">LOG IN</h2>
+                    <h2 className="mt-8 text-4xl font-montserrat text-white font-bold tracking-widest">LOG IN</h2>
                 </span>
 
-                <div className="wrap-input relative w-5/6 h-max pt-12">
+                <div className="wrap-input relative w-11/12 phone:w-5/6 h-max pt-12">
                     <AiOutlineUser className=" text-grey4 text-xl" />
                     <input
-                        className="w-5/6 ml-2 pb-2 font-poppins text-white text-xl bg-transparent border-solid border-0 border-b-4 border-b-grey1 transition-all duration-700 focus:border-b-white outline-none placeholder:text-white"
+                        className="w-11/12 phone:w-5/6 ml-2 pb-2 font-poppins text-white text-xl bg-transparent border-solid border-0 border-b-4 border-b-grey1 transition-all duration-700 focus:border-b-white outline-none placeholder:text-white"
                         type="text"
                         name="username"
                         placeholder="Username"
                         ref={userEl}
+                        onFocus={removeErr}
                     />
-                    <div className="error-mess1"></div>
+                    <div className="error-mess1 h-4 mt-3 text-red1 ml-8"></div>
                 </div>
 
-                <div className="wrap-input relative w-5/6 h-max pt-12">
+                <div className="wrap-input relative w-11/12 phone:w-5/6 h-max pt-8">
                     <AiOutlineLock className=" text-grey4 text-xl" />
                     <input
-                        className="w-5/6 ml-2 pb-2 font-poppins text-white text-xl bg-transparent border-solid border-0 border-b-4 border-b-grey1 transition-all duration-700 focus:border-b-white outline-none placeholder:text-white"
+                        className="w-11/12 phone:w-5/6 ml-2 pb-2 font-poppins text-white text-xl bg-transparent border-solid border-0 border-b-4 border-b-grey1 transition-all duration-700 focus:border-b-white outline-none placeholder:text-white"
                         type="password"
                         name="password"
                         placeholder="Password"
                         autoComplete="on"
                         ref={passEl}
+                        onFocus={removeErr}
                     />
-                    <div className="error-mess1"></div>
+                    <div className="error-mess1 h-4 mt-3 text-red1 ml-8"></div>
                 </div>
 
-                <div className="mt-6 mr-64 flex items-center">
+                <div className="relative w-11/12 phone:w-5/6 mt-4 flex items-center ">
                     <input
                         className="w-4 h-4"
                         id="checkbox1"
