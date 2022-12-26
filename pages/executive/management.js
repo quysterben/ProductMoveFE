@@ -10,13 +10,8 @@ import { AiFillEdit, AiFillDelete } from 'react-icons/ai';
 const manegement = () => {
     const { auth, user } = useSelector((state) => state);
     const dispatch = useDispatch();
-    const router = useRouter();
 
     useEffect(() => {
-        if (auth.loggedIn === false) {
-            router.push('/login');
-        }
-
         dispatch(getAllUsers({ auth }));
     }, [dispatch, auth, router]);
 

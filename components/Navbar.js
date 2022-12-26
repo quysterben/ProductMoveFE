@@ -6,42 +6,49 @@ import { ImStatsDots } from 'react-icons/im';
 import { Button } from 'antd';
 import { FaWarehouse } from 'react-icons/fa';
 import Link from 'next/link';
+import { logout } from '~/redux/actions/authAction';
+import { useRouter } from 'next/router';
 
 const Navbar = () => {
     const { auth } = useSelector((state) => state);
     const dispatch = useDispatch();
     const [html, setHtml] = useState('');
 
+    const handleLogout = (e) => {
+        dispatch(logout(auth.user));
+    };
+
     useEffect(() => {
-        if (auth.role === 'excutive') {
+        if (auth.user.role === 'executive') {
             setHtml(
                 <>
                     <h1 className="text-color1 ml-8 mr-10">Logo</h1>
                     <ul className="w-full flex justify-center">
                         <li className="mx-16 hover:cursor-pointer w-[80px] hover:bg-color3">
-                            <Link href="/excutive/management">
+                            <Link href="/executive/management">
                                 <HiUserGroup className="text-color1 h-8 w-8 mt-2 ml-6 hover:text-color1" />
                             </Link>
                             <p className="text-color1 w-full text-center">Staff</p>
                         </li>
                         <li className="mx-16 hover:cursor-pointer w-[80px]  hover:bg-color3">
-                            <Link href="/excutive/category">
+                            <Link href="/executive/category">
                                 <MdCategory className="text-color1 h-8 w-8 mt-2 ml-6 hover:text-color1" />
                             </Link>
                             <p className="text-color1 w-full text-center">Model</p>
                         </li>
                         <li className="mx-16 hover:cursor-pointer w-[80px]  hover:bg-color3">
-                            <Link href="/excutive/statistics">
+                            <Link href="/executive/statistics">
                                 <ImStatsDots className="text-color1 h-8 w-8 mt-2 ml-6 hover:text-color1" />
                             </Link>
                             <p className="text-color1 w-full text-center">Statistics</p>
                         </li>
                     </ul>
-                    <h3 className="text-color1 mx-6">{auth.name}</h3>
+                    <h3 className="text-color1 mx-6">{auth.user.name}</h3>
                     <Button
                         type="primary"
                         className="inline-block mr-10 border-color1 bg-color3 
                     hover:bg-color1 hover:text-color4"
+                        onClick={(e) => handleLogout(e)}
                     >
                         Logout
                     </Button>

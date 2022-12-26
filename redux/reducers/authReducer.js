@@ -6,14 +6,14 @@ import { AUTH } from '../types';
 // Bảo hành : warranty
 
 const initialState = {
-    loggedIn: true,
-    email: 'quysterben@gmail.com',
-    name: 'Sterben',
-    role: 'excutive',
+    token: null,
+    user: null,
 };
 
 const authReducer = (state = initialState, action) => {
     switch (action.type) {
+        case AUTH:
+            return action.payload;
         default:
             return state;
     }
