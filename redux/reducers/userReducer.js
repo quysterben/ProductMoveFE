@@ -11,6 +11,9 @@ const userReducer = (state = initialState, action) => {
                 ...state,
                 users: action.payload,
             };
+        case USER.ADD_USER: {
+            return action.payload;
+        }
         default:
             return state;
     }
