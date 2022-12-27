@@ -19,6 +19,12 @@ const manegement = () => {
     const cfPassData = useRef('');
     const [roleData, setRoleData] = useState('');
 
+    const [filteredInfo, setFilteredInfo] = useState({})
+    
+    const handleTableChange = (pagination, filters, sorter) => {
+        setFilteredInfo(filters)
+    }
+
     useEffect(() => {
         const loggedIn = localStorage.getItem('loggedIn');
         if (loggedIn !== 'true') {
@@ -49,6 +55,26 @@ const manegement = () => {
             title: 'Role',
             dataIndex: 'role',
             key: 'role',
+            filters: [
+                {
+                    text: 'Executive',
+                    value: 'executive'
+                },
+                {
+                    text: 'Production',
+                    value: 'production'
+                },
+                {
+                    text: 'Distribution',
+                    value: 'distribution'
+                },
+                {
+                    text: 'Warranty',
+                    value: 'warranty'
+                },
+            ],
+            filteredValue: filteredInfo.role || null,
+            onFilter: (value, record) => record.role.includes(value),
         },
         {
             title: 'Action',
@@ -202,6 +228,7 @@ const manegement = () => {
                         columns={columns}
                         pagination={false}
                         bordered={true}
+                        onChange={handleTableChange}
                     />
                 </div>
             </div>
