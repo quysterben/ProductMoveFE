@@ -1,15 +1,15 @@
 import { LOT } from '../types';
 
 const initialState = {
-    lots: [],
+    lot: {},
 };
 
 const lotReducer = (state = initialState, action) => {
     switch (action.type) {
-        case LOT.GET_LOTS:
+        case LOT.GET_LOT:
             return {
                 ...state,
-                lots: action.payload,
+                lot: action.payload,
             };
         case LOT.PROCEDURE_LOT:
             return action.payload;

@@ -5,18 +5,18 @@ import { postDataAPI, getDataAPI, deleteDataAPI, putDataAPI } from '../../utils/
 export const getLotData =
     ({ url, auth, data }) =>
     async (dispatch) => {
-        console.log(getLotData);
+        console.log('getLotData');
         try {
             const res = await getDataAPI(`lots/${data}`, auth.token);
             dispatch({
-                type: LOT.GET_LOTS,
+                type: LOT.GET_LOT,
                 payload: res.data,
             });
         } catch (err) {
             dispatch({
                 type: ALERT,
                 payload: {
-                    error: 'Get lots data failed!',
+                    error: 'Get lot data failed!',
                 },
             });
         }
