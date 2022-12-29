@@ -29,6 +29,11 @@ export const PRODUCT = {
     RETURN_CUSTOMER: 'RETURN_CUSTOMER',
 };
 
+export const DELIVERY = {
+    INCOMING: 'INCOMING',
+    DELIVERING: 'DELIVERING',
+};
+
 export const STORAGE = {
     GET_STORAGES: 'GET_STORAGES',
 };

@@ -62,12 +62,20 @@ export const deliveryLot =
         }
     };
 
-//chua xong
 export const receiveLot =
     ({ url, auth, data }) =>
     async (dispatch) => {
         console.log('receiveLot');
         try {
+            const res = await postDataAPI(
+                `logistics/${data.delivery_id}`,
+                { storage_id: data.storage_id },
+                auth.token,
+            );
+            dispatch({
+                type: LOT.RECEIVE_LOT,
+                payload: res,
+            });
         } catch (err) {
             dispatch({
                 type: ALERT,

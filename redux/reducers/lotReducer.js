@@ -12,7 +12,10 @@ const lotReducer = (state = initialState, action) => {
                 lot: action.payload,
             };
         case LOT.PROCEDURE_LOT:
-            return action.payload;
+            return {
+                ...state,
+                res: action.payload,
+            };
         case LOT.DELIVERY_LOT:
             return action.payload;
         case LOT.RECEIVE_LOT:

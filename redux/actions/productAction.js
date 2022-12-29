@@ -21,3 +21,26 @@ export const getProductsData =
             });
         }
     };
+
+export const receiveProduct =
+    ({ auth, data }) =>
+    async (dispatch) => {
+        try {
+            const res = await postDataAPI(
+                `logistics/${data.delivery_id}`,
+                data.storage_id,
+                auth.token,
+            );
+            dispatch({
+                type: PRODUCT.RECEIVE_PRODUCT,
+                payload: res,
+            });
+        } catch (err) {
+            dispatch({
+                type: ALERT,
+                payload: {
+                    error: 'Receive product data failed!',
+                },
+            });
+        }
+    };
