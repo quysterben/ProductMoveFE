@@ -32,7 +32,39 @@ const warehouse = () => {
         dispatch(getAllUsers({ auth }));
     }, [dispatch, auth]);
 
-    const dataSource = product.products;
+    const convertStatus = (status) => {
+        switch (status) {
+            case 1: 
+                console.log('hihihaha')
+                return 'New product'
+            case 2: 
+                return 'On sale'
+            case 3: 
+                return 'Sold'
+            case 4: 
+                return 'Repair in waiting'
+            case 5: 
+                return 'Repairing'
+            case 6: 
+                return 'Repaired'
+            case 7: 
+                return 'Recalling'
+            case 8: 
+                return 'Recalled'
+            case 9: 
+                return 'Returned'
+            default: 
+                return 'Shipping'
+        }
+    }
+
+    const dataSource = product.products.map(data => {
+        const s = convertStatus(data.status)
+        return {
+            ...data,
+            status: s
+        }
+    });
     const lotsData = product.products
         .map((param) => param.lot_number)
         .filter((e, i, a) => a.indexOf(e) === i);
@@ -72,6 +104,11 @@ const warehouse = () => {
             key: 'manufacturing_date',
         },
         {
+            title: 'Status',
+            dataIndex: 'status',
+            key: 'status',
+        },
+        {
             title: 'Action',
             key: 'action',
             render: (record) => (
@@ -86,7 +123,17 @@ const warehouse = () => {
             ),
         },
     ];
-
+    // console.log(dataSource.map(data => {
+    //     const s = convertStatus(data.status)
+    //     return {
+    //         ...data,
+    //         status: s
+    //     }
+    // }))
+    dataSource.forEach(element => {
+        // console.log(element.status)
+        console.log(convertStatus(element.status))
+    })
     //Produre modal
     const [isModalOpen, setIsModalOpen] = useState(false);
     const amountData = useRef();
@@ -104,6 +151,7 @@ const warehouse = () => {
     const showModal = () => {
         setIsModalOpen(true);
     };
+
 
     const handleOk = () => {
         if (validate()) {
