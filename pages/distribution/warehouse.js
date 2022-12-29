@@ -1,13 +1,15 @@
 import Navbar from '~/components/Navbar';
 import { useRouter } from 'next/router';
+import { useEffect } from 'react';
+import { Button } from 'antd';
 
 const warehouse = () => {
     const router = useRouter();
 
     useEffect(() => {
-        if (auth.loggedIn === false) {
-            router.push('/login');
-        }
+        // if (auth.loggedIn === false) {
+        //     router.push('/login');
+        // }
     }, [router]);
 
     return (

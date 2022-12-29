@@ -9,9 +9,9 @@ import { color } from 'chart.js/helpers';
 import autocolors from 'chartjs-plugin-autocolors';
 import { lots, products } from '~/testdata';
 import { AiOutlineBarChart, AiOutlineTable } from 'react-icons/ai';
-
+import { getProductsData } from '~/redux/actions/productAction';
 const statistics = () => {
-    const { auth, model } = useSelector((state) => state);
+    const { auth, model, lot, product } = useSelector((state) => state);
     const dispatch = useDispatch();
     const router = useRouter();
     const [tableStatistic, setTableStatistic] = useState(false);
@@ -38,7 +38,13 @@ const statistics = () => {
             router.push('/login');
         }
         dispatch(getAllModels({ auth }));
+        // dispatch(getLotData({ auth, data:1 }))
+        dispatch(getProductsData({ auth }));
     }, [dispatch, auth]);
+
+    const lotsData = product.products
+    .map((param) => param.lot_number)
+    .filter((e, i, a) => a.indexOf(e) === i);
 
     Chart.register(autocolors);
     const [myChart1, setMyChart1] = useState();
@@ -201,6 +207,7 @@ const statistics = () => {
     // <----------------Products Statistic-------------------->
 
     const productsStatistics = () => {
+        console.log(lotsData)
         if (tableStatistic) {
             const curData = getModelSta('iPhone', 'TABLE')
                 .concat(getModelSta('iPad', 'TABLE'))
