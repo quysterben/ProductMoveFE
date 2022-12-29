@@ -32,7 +32,7 @@ const pending = () => {
 
     let dataSource = delivery.incoming.map((param) => {
         let status = 'Not received';
-        if (param.received === true) {
+        if (param.received === 1) {
             status = 'Received';
         }
         return {
@@ -46,7 +46,7 @@ const pending = () => {
     if (viewData === false) {
         dataSource = delivery.delivering.map((param) => {
             let status = 'Not received';
-            if (param.received === true) {
+            if (param.received === 1) {
                 status = 'Received';
             }
             return {
