@@ -11,6 +11,11 @@ const storageReducer = (state = initialState, action) => {
                 ...state,
                 storages: action.payload,
             };
+        case STORAGE.CREATE_NEW_STORAGE:
+            return {
+                ...state,
+                res: action.payload,
+            };
         default:
             return state;
     }

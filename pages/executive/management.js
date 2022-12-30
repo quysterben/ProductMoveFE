@@ -6,6 +6,7 @@ import { useRouter } from 'next/router';
 
 import { Button, Table, Modal, Form, Input, Select } from 'antd';
 import { AiFillEdit, AiFillDelete } from 'react-icons/ai';
+import { createNewStorage } from '~/redux/actions/storageAction';
 
 const manegement = () => {
     const { auth, user } = useSelector((state) => state);
@@ -19,11 +20,11 @@ const manegement = () => {
     const cfPassData = useRef('');
     const [roleData, setRoleData] = useState('');
 
-    const [filteredInfo, setFilteredInfo] = useState({})
-    
+    const [filteredInfo, setFilteredInfo] = useState({});
+
     const handleTableChange = (pagination, filters, sorter) => {
-        setFilteredInfo(filters)
-    }
+        setFilteredInfo(filters);
+    };
 
     useEffect(() => {
         const loggedIn = localStorage.getItem('loggedIn');
@@ -58,19 +59,19 @@ const manegement = () => {
             filters: [
                 {
                     text: 'Executive',
-                    value: 'executive'
+                    value: 'executive',
                 },
                 {
                     text: 'Production',
-                    value: 'production'
+                    value: 'production',
                 },
                 {
                     text: 'Distribution',
-                    value: 'distribution'
+                    value: 'distribution',
                 },
                 {
                     text: 'Warranty',
-                    value: 'warranty'
+                    value: 'warranty',
                 },
             ],
             filteredValue: filteredInfo.role || null,
@@ -79,19 +80,23 @@ const manegement = () => {
         {
             title: 'Action',
             key: 'action',
-            render: () => (
+            render: (record) => (
                 <div>
-                    <AiFillEdit className="mr-4 h-6 w-6 text-color4 hover:text-color2 hover:cursor-pointer">
-                        Edit
-                    </AiFillEdit>
-                    <AiFillDelete className="h-6 w-6 text-color4 hover:text-color2 hover:cursor-pointer">
-                        Delete
-                    </AiFillDelete>
+                    {record.role !== 'executive' && (
+                        <div>
+                            <AiFillEdit
+                                onClick={() => handelShowStorageModal(record.id)}
+                                className="mr-4 h-6 w-6 text-color4 hover:text-color2 hover:cursor-pointer"
+                            />
+                            <AiFillDelete className="h-6 w-6 text-color4 hover:text-color2 hover:cursor-pointer" />
+                        </div>
+                    )}
                 </div>
             ),
         },
     ];
 
+    //Create User Modal
     const handleChangeSelect = (value) => {
         setRoleData(value);
     };
@@ -159,9 +164,32 @@ const manegement = () => {
         setRoleData('');
     };
 
+    //Add new storage modal
+    const [isStorageModalOpen, setIsStorageModalOpen] = useState(false);
+    const [userId, setUserId] = useState();
+    const location = useRef('');
+
+    const handelShowStorageModal = (id) => {
+        setUserId(id);
+        setIsStorageModalOpen(true);
+    };
+
+    const handleOkStorageModal = () => {
+        const data = {
+            user_id: userId,
+            location: location.current.input.value,
+        };
+        dispatch(createNewStorage({ auth, data }));
+        setIsStorageModalOpen(false);
+    };
+
+    const handleCancelStorageModal = () => {
+        setIsStorageModalOpen(false);
+    };
+
     return (
         <div>
-            <Navbar></Navbar>
+            <Navbar />
             <Modal
                 title="User Infomation"
                 visible={isModalOpen}
@@ -200,6 +228,23 @@ const manegement = () => {
                             <Option value="distribution">distribution</Option>
                             <Option value="warranty">warranty</Option>
                         </Select>
+                    </Form.Item>
+                </Form>
+            </Modal>
+            <Modal
+                title="Storage Infomation"
+                visible={isStorageModalOpen}
+                onOk={handleOkStorageModal}
+                onCancel={handleCancelStorageModal}
+            >
+                <Form
+                    name="storagedata"
+                    labelCol={{ span: 8 }}
+                    wrapperCol={{ span: 16 }}
+                    autoComplete="off"
+                >
+                    <Form.Item label="Location" name="location">
+                        <Input ref={location} />
                     </Form.Item>
                 </Form>
             </Modal>

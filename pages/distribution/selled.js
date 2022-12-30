@@ -4,15 +4,13 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useRouter } from 'next/router';
 
 import { Button, Table, Modal, Form, Input, Select, Checkbox } from 'antd';
-import { TiShoppingCart } from 'react-icons/ti';
-import { getProductsData, sellProduct } from '~/redux/actions/productAction';
-import { getAllModels } from '~/redux/actions/modelActions';
-import { getAllStorages } from '~/redux/actions/storageAction';
-import { getAllUsers } from '~/redux/actions/userAction';
+import { MdErrorOutline } from 'react-icons/md';
+import { getSelledProducts, sellProduct } from '~/redux/actions/productAction';
 import { createNewCustomer, getAllCustomers } from '~/redux/actions/customerAction';
+import { getAllStorages } from '~/redux/actions/storageAction';
 
 const selled = () => {
-    const { auth, product, customer } = useSelector((state) => state);
+    const { auth, product, customer, storage } = useSelector((state) => state);
     const dispatch = useDispatch();
     const router = useRouter();
 
@@ -26,11 +24,9 @@ const selled = () => {
         if (loggedIn !== 'true') {
             router.push('/login');
         }
-        dispatch(getProductsData({ auth }));
-        dispatch(getAllModels({ auth }));
-        dispatch(getAllStorages({ auth }));
-        dispatch(getAllUsers({ auth }));
+        dispatch(getSelledProducts({ auth }));
         dispatch(getAllCustomers({ auth }));
+        dispatch(getAllStorages({ auth }));
     }, [dispatch, auth]);
 
     const convertStatus = (status) => {
@@ -58,16 +54,17 @@ const selled = () => {
         }
     };
 
-    const dataSource = product.products.map((data) => {
+    const dataSource = product.selled_products?.map((data) => {
         const s = convertStatus(data.status);
         return {
-            ...data,
+            id: data.id,
             status: s,
+            customer: customer.customers[data.customer_id - 1]?.email,
+            product_line: data.product_line,
+            model: data.model,
+            sale_date: data.sale_date,
         };
     });
-    const lotsData = product.products
-        .map((param) => param.lot_number)
-        .filter((e, i, a) => a.indexOf(e) === i);
 
     const columns = [
         {
@@ -76,17 +73,9 @@ const selled = () => {
             key: 'id',
         },
         {
-            title: 'Lot Number',
-            dataIndex: 'lot_number',
-            key: 'lot_number',
-            filters: lotsData.map((param) => {
-                return {
-                    text: param,
-                    value: param,
-                };
-            }),
-            filteredValue: filteredInfo.lot_number || null,
-            onFilter: (value, record) => record.lot_number === value,
+            title: 'Customer',
+            dataIndex: 'customer',
+            key: 'customer',
         },
         {
             title: 'Product Line',
@@ -99,9 +88,9 @@ const selled = () => {
             key: 'model',
         },
         {
-            title: 'Manufacturing Date',
-            dataIndex: 'manufacturing_date',
-            key: 'manufacturing_date',
+            title: 'Sale Date',
+            dataIndex: 'sale_date',
+            key: 'sale_date',
         },
         {
             title: 'Status',
@@ -113,7 +102,7 @@ const selled = () => {
             key: 'action',
             render: (record) => (
                 <div>
-                    <TiShoppingCart
+                    <MdErrorOutline
                         className="mr-4 h-6 w-6 text-color4 hover:text-color2 hover:cursor-pointer"
                         onClick={() => handleShowModal(record.id)}
                     />
@@ -124,40 +113,23 @@ const selled = () => {
 
     //Sell modal
     const [isSellModalOpen, setIsSellModalOpen] = useState(false);
-    const customerEmail = useRef('');
-    const [customerId, setCustomerId] = useState('');
     const [productId, setProductId] = useState();
-
-    const [componentDisabled, setComponentDisabled] = useState(true);
+    const [storageData, setStorageData] = useState('');
 
     const handleShowModal = (id) => {
         setProductId(id);
         setIsSellModalOpen(true);
     };
 
-    const handleChangeModel = (value) => {
-        setCustomerId(value);
-    };
-
     const handleOk = () => {
-        if (componentDisabled === false) {
+        if (true) {
             const data = {
                 product_id: productId,
-                customer_id: customerId,
+                storage_id: storageData,
             };
-            dispatch(sellProduct({ auth, data }));
-        } else {
-            const data = { email: customerEmail.current.input.value };
-            dispatch(createNewCustomer({ auth, data }));
-            setTimeout(() => {
-                const data = {
-                    product_id: productId,
-                    customer_id: customer.customers[customer.customers.length - 1].id,
-                };
-                dispatch(sellProduct({ auth, data }));
-            }, 1000);
+            console.log(data);
         }
-        router.reload();
+        //router.reload();
         setIsSellModalOpen(false);
     };
 
@@ -165,54 +137,41 @@ const selled = () => {
         setIsSellModalOpen(false);
     };
 
+    const handleChangeStorage = (value) => {
+        setStorageData(value);
+    };
+
     return (
         <div>
             <Navbar></Navbar>
             <Modal
-                title="User Infomation"
+                title="Product Recall"
                 visible={isSellModalOpen}
                 onOk={handleOk}
                 onCancel={handleCancel}
             >
-                <Checkbox
-                    className="float-right"
-                    checked={componentDisabled}
-                    onChange={(e) => setComponentDisabled(e.target.checked)}
-                >
-                    Old customer
-                </Checkbox>
                 <Form
-                    className="mt-14"
-                    name="CustomerData"
+                    name="Storage"
                     labelCol={{ span: 8 }}
                     wrapperCol={{ span: 16 }}
                     autoComplete="off"
-                    disabled={componentDisabled}
                 >
-                    <Form.Item name="customer" label="Customer">
-                        <Select placeholder="Select" onChange={handleChangeModel} allowClear>
-                            {customer.customers.map((param) => (
-                                <Option value={param.id}>{param.email}</Option>
+                    <Form.Item name="storage" label="To storage">
+                        <Select
+                            placeholder="Select storage"
+                            onChange={handleChangeStorage}
+                            allowClear
+                        >
+                            {storage.storages.map((param) => (
+                                <Option value={param.id}>{param.location} </Option>
                             ))}
                         </Select>
-                    </Form.Item>
-                </Form>
-                <Form
-                    className="mt-10"
-                    name="CustomerData"
-                    labelCol={{ span: 8 }}
-                    wrapperCol={{ span: 16 }}
-                    autoComplete="off"
-                    disabled={!componentDisabled}
-                >
-                    <Form.Item label="Email" name="Email">
-                        <Input ref={customerEmail} />
                     </Form.Item>
                 </Form>
             </Modal>
             <div className="pt-[88px] px-16">
                 <div className="flex justify-between">
-                    <h2 className="font-bold">Products Manegement</h2>
+                    <h2 className="font-bold">Selled Product Manegement</h2>
                     <div>
                         <Button
                             className="mr-6 bg-color3 border-color1 hover:bg-color2 hover:text-color1"

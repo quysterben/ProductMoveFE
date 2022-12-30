@@ -37,6 +37,7 @@ export const DELIVERY = {
 
 export const STORAGE = {
     GET_STORAGES: 'GET_STORAGES',
+    CREATE_NEW_STORAGE: 'CREATE_NEW_STORAGE',
 };
 
 export const CUSTOMER = {
