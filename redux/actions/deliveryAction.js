@@ -28,6 +28,12 @@ export const getDeliveringData =
         console.log('get delivering data');
         try {
             const res = await getDataAPI(`logistics/sent/`, auth.token);
+            // const temp = []
+            // for (let i = 0; i < res.data.length; i++) {
+            //     const res1 = await getDataAPI(`logistics/${res.data[i].id}`, auth.token);
+            //     console.log(i);
+            //     console.log(res1);
+            // }
             dispatch({
                 type: DELIVERY.DELIVERING,
                 payload: res.data,
