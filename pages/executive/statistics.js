@@ -401,7 +401,7 @@ const statistics = () => {
 
     const statusOfProducts = () => {
         // console.log('this is ran')
-        const models = fakeProducts1
+        const models = allProducts
             .map((param) => param.model)
             .filter((item, pos, self) => self.indexOf(item) === pos);
         let allStatus = [];
@@ -412,10 +412,10 @@ const statistics = () => {
                 name: models[i],
                 status: [],
             };
-            const total = fakeProducts1.filter((p) => p.model === models[i]).length;
+            const total = allProducts.filter((p) => p.model === models[i]).length;
             for (let j = 0; j < 10; j++) {
                 let count = 0;
-                count = fakeProducts1.filter((p) => p.status === j && p.model === models[i]).length;
+                count = allProducts.filter((p) => p.status === j && p.model === models[i]).length;
                 // console.log(count)
                 newObject.status.push({
                     status: convertStatus(j),
@@ -433,7 +433,7 @@ const statistics = () => {
                 datasets.push({
                     label: allStatus[1].status[i].status,
                     backgroundColor: indexToColor(i),
-                    data: allStatus.map((e) => e.status[i].count),
+                    data: allStatus.map((e) => e.status[i].percentInAllModel),
                 });
             }
             const chartData = {
@@ -451,12 +451,21 @@ const statistics = () => {
                                 return (
                                     data.datasets[tooltipItems.datasetIndex].label +
                                     ': ' +
-                                    tooltipItems.xLabel +
+                                    data.datasets[tooltipItems.datasetIndex].data +
                                     ' %'
                                 );
                             },
                         },
                     },
+                    resoponsive: true,
+                    scales: {
+                        x: {
+                            stacked: true,
+                        },
+                        y: {
+                            stacked: true
+                        }                        
+                    }
                 },
             };
             setMyChart5(new Chart(chart5.current, chartData));
@@ -532,12 +541,14 @@ const statistics = () => {
             const tableData = [];
             for (let i = 0; i < models.length; i++) {
                 for (let j = 0; j < 10; j++) {
-                    tableData.push({
-                        model: models[i],
-                        status: allStatus[i].status[j].status,
-                        count: allStatus[i].status[j].count,
-                        percentInAllModel: allStatus[i].status[j].percentInAllModel + '%',
-                    });
+                    if (allStatus[i].status[j].count !== 0) {
+                        tableData.push({
+                            model: models[i],
+                            status: allStatus[i].status[j].status,
+                            count: allStatus[i].status[j].count,
+                            percentInAllModel: allStatus[i].status[j].percentInAllModel + '%',
+                        });
+                    }
                 }
             }
             setColumns(columns);

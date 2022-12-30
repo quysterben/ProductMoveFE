@@ -77,6 +77,8 @@ const statistics = () => {
             }
         }
     }, [tableStatistic]);
+    
+
 
     function doStatistic(value) {
         switch (value) {
@@ -84,7 +86,7 @@ const statistics = () => {
                 showProductsManufactured();
                 break;
             case 'Products By Status':
-                productsStatistics();
+                productByStatus();
         }
     }
 
@@ -221,7 +223,74 @@ const statistics = () => {
     // deliveredProduct: product delivered
     // returnedProduct: product returned
     const productByStatus = () => {
+        const secondHalf = delivery.delivering
+        console.log(secondHalf)
 
+        if (tableStatistic) {
+            const columns = [
+                {
+                    title: 'Model',
+                    key: 'model',
+                    dataIndex: 'model',
+                },
+                {
+                    title: 'Product Line',
+                    key: 'Product Line',
+                    dataIndex: 'product_line',
+                },
+                {
+                    title: 'Quantity',
+                    key: 'quantity',
+                    dataIndex: 'amount',
+                },
+            ];
+            setColumns(columns)
+            setDataSource(secondHalf)
+        } else {
+            setMyChart1(
+                new Chart(chart1.current, {
+                    type: 'pie',
+                    data: {
+                        labels: secondHalf.map((p) => p.model),
+                        datasets: [
+                            {
+                                label: 'Percentage of Each Product model delivered',
+                                data: secondHalf.map((p) => p.amount),
+                            },
+                        ],
+                    },
+                    options: {
+                        plugins: {
+                            autocolors: {
+                                mode: 'data',
+                            },
+                        },
+                    },
+                }),
+            );
+            setMyChart2(
+                new Chart(chart2.current, {
+                    type: 'bar',
+                    data: {
+                        labels: secondHalf.map((p) => p.model),
+                        datasets: [
+                            {
+                                label: 'Quantity of all Model',
+                                data: secondHalf.map((p) => p.amount),
+                            },
+                        ],
+                    },
+                    options: {
+                        plugins: {
+                            autocolors: {
+                                mode: 'data',
+                            },
+                        },
+                    },
+                }),
+            );
+        }
+ 
     }
     
 
@@ -235,8 +304,7 @@ const statistics = () => {
                         <Select.Option value="Products Manufactured">
                             Products Manufactured
                         </Select.Option>
-                        <Select.Option value="iPad Production">iPad Production</Select.Option>
-                        <Select.Option value="MacBook Production">MacBook Production</Select.Option>
+                        <Select.Option value="Products By Status">Products By Status</Select.Option>
                     </Select>
                 </div>
 

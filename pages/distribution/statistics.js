@@ -8,6 +8,7 @@ import { Chart } from 'chart.js/auto';
 import autocolors from 'chartjs-plugin-autocolors';
 import { getProductsData } from '~/redux/actions/productAction';
 import { getDeliveringData } from '~/redux/actions/deliveryAction';
+import { getSelledProducts } from '~/redux/actions/productAction';
 import { data } from 'autoprefixer';
 
 const statistics = () => {
@@ -28,6 +29,7 @@ const statistics = () => {
     const [columns, setColumns] = useState([]);
     const [dataSource, setDataSource] = useState([]);
     const allProducts = product.products;
+    const soldProducts = product.selled_products;
 
     useEffect(() => {
         const loggedIn = localStorage.getItem('loggedIn');
@@ -36,9 +38,13 @@ const statistics = () => {
         }
         dispatch(getProductsData({ auth }));
         dispatch(getDeliveringData({ auth }));
+        dispatch(getSelledProducts({ auth }));
     }, [dispatch, auth]);
-    
+
     const [statistic, setStatistic] = useState('');
+    // console.log(product)
+    // console.log(allProducts)
+    // console.log(soldProducts)
 
     const handleSelectChange = (value) => {
         setStatistic(value);
@@ -49,7 +55,7 @@ const statistics = () => {
         setFilteredInfo(filters);
     };
     useEffect(() => {
-        console.log(filteredInfo)
+        console.log(filteredInfo);
         doStatistic(statistic);
     }, [filteredInfo]);
 
@@ -88,8 +94,11 @@ const statistics = () => {
             case 'Products in storage':
                 showProductsInStorage();
                 break;
-            case 'Products By Status':
-                productsStatistics();
+            case 'Product by status':
+                productByStatus();
+                break;
+            case 'Statistic sold products':
+                statisticSoldProduct();
         }
     }
 
@@ -237,13 +246,328 @@ const statistics = () => {
         }
     };
 
-    // <------------Product by status------------------>
+    const concatProducts = allProducts.concat(soldProducts);
+    // <------------Statistics sold product------------------>
     // allProduct: product in storage
     // deliveredProduct: product delivered
     // returnedProduct: product returned
+    const statisticSoldProduct = () => {
+        // console.log(concatProducts)
+        const models = concatProducts
+            .map((param) => {
+                return { model: param.model, product_line: param.product_line };
+            })
+            .filter(
+                (value, index, self) => index === self.findIndex((t) => t.model === value.model),
+            );
+        console.log(models);
+        const soldData = models.map((m => {
+            return {
+                model: m.model,
+                product_line: m.product_line,
+                quantity: concatProducts.filter((p) => p.model === m.model && p.status === 3 ).length
+            }
+        }))
+        console.log(soldData)
+        if (tableStatistic) {
+            const columns = [
+                {
+                    title: 'Model',
+                    key: 'model',
+                    dataIndex: 'model',
+                },
+                {
+                    title: 'Product_line',
+                    key: 'product_line',
+                    dataIndex: 'product_line',
+                },
+                {
+                    title: 'Quantity Sold',
+                    key: 'quantity',
+                    dataIndex: 'quantity',
+                    sorter: (a, b) => a.quantity - b.quantity
+                },
+                {
+                    title: 'Quantity Remain',
+                    key: 'remain',
+                    dataIndex: 'remain',
+                },
+                
+            ]
+            const tableData = []
+            for (let i = 0; i < soldData.length; i++) {
+                tableData.push({
+                    model: soldData[i].model,
+                    product_line: soldData[i].product_line,
+                    quantity: soldData[i].quantity,
+                    remain: concatProducts.filter(p => p.model === soldData[i].model && p.status !== 3).length - soldData.length
+                })
+            }
+            setColumns(columns)
+            setDataSource(tableData)
+        } else {
+            // console.log(soldData.map(m => m.model))
+            // console.log(soldData.map(m => m.quantity))
+            setMyChart1(
+                new Chart(chart1.current, {
+                    type: 'pie',
+                    data: {
+                        labels: soldData.map(m => m.model),
+                        datasets: [
+                            {
+                                label: 'Percentage of Each Product sold',
+                                data: soldData.map(m => m.quantity),
+                                backgroundColor: [
+                                    'rgba(255, 99, 132, 0.2)',
+                                    'rgba(255, 159, 64, 0.2)',
+                                    'rgba(255, 205, 86, 0.2)',
+                                ],
+                                borderColor: [
+                                    'rgb(255, 99, 132)',
+                                    'rgb(255, 159, 64)',
+                                    'rgb(255, 205, 86)',
+                                ],
+                                borderWidth: 1,
+                            },
+                        ],
+                    },
+                }),
+            );
+            setMyChart2(
+                new Chart(chart2.current, {
+                    type: 'bar',
+                    data: {
+                        labels: soldData.map(m => m.model),
+                        datasets: [
+                            {
+                                label: 'Quantity of each model sold',
+                                data: soldData.map(m => m.quantity),
+                            },
+                        ],
+                    },
+                    options: {
+                        plugins: {
+                            autocolors: {
+                                mode: 'data',
+                            },
+                        },
+                    },
+                }),
+            );
+        }
+    };
+
+    // <------------Status------------------>
+
+
     const productByStatus = () => {
-        
-    }
+        console.log(allProducts)
+        console.log(soldProducts)
+        const conProducts = allProducts.concat(soldProducts.filter(p => p.status === 3))
+        const models = conProducts
+            .map((param) => param.model)
+            .filter((item, pos, self) => self.indexOf(item) === pos);
+        let allStatus = [];
+        for (let i = 0; i < models.length; i++) {
+            //model: models[i]
+            // console.log(i)
+            let newObject = {
+                name: models[i],
+                status: [],
+            };
+            const total = conProducts.filter((p) => p.model === models[i]).length;
+            for (let j = 0; j < 10; j++) {
+                let count = 0;
+                count = conProducts.filter((p) => p.status === j && p.model === models[i]).length;
+                // console.log(count)
+                newObject.status.push({
+                    status: convertStatus(j),
+                    count: count,
+                    percentInAllModel: Math.round((count / total) * 100),
+                });
+            }
+            allStatus.push(newObject);
+            // console.log(allStatus)
+        }
+        let tableData;
+        if (!tableStatistic) {
+            let datasets = [];
+            for (let i = 0; i < 10; i++) {
+                datasets.push({
+                    label: allStatus[1].status[i].status,
+                    backgroundColor: indexToColor(i),
+                    data: allStatus.map((e) => e.status[i].percentInAllModel),
+                });
+            }
+            const chartData = {
+                type: 'bar',
+                data: {
+                    labels: models,
+                    datasets: datasets,
+                },
+                options: {
+                    tooltipss: {
+                        enable: true,
+                        mode: 'single',
+                        callbacks: {
+                            label: function (tooltipItems, data) {
+                                return (
+                                    data.datasets[tooltipItems.datasetIndex].label +
+                                    ': ' +
+                                    data.datasets[tooltipItems.datasetIndex].data +
+                                    ' %'
+                                );
+                            },
+                        },
+                    },
+                    resoponsive: true,
+                    scales: {
+                        x: {
+                            stacked: true,
+                        },
+                        y: {
+                            stacked: true
+                        }                        
+                    }
+                },
+            };
+            setMyChart1(new Chart(chart1.current, chartData));
+        } else {
+            const filterModel = models.map((e) => {
+                return { value: e, text: e };
+            });
+            const columns = [
+                {
+                    title: 'Model',
+                    dataIndex: 'model',
+                    filters: filterModel,
+                    filteredValue: filteredInfo.model || null,
+                    onFilter: (value, record) => record.model === value,
+                },
+                {
+                    title: 'Status',
+                    dataIndex: 'status',
+                    filters: [
+                        {
+                            text: 'Shipping',
+                            value: 'Shipping',
+                        },
+                        {
+                            text: 'New product',
+                            value: 'New product',
+                        },
+                        {
+                            text: 'On Sale',
+                            value: 'On Sale',
+                        },
+                        {
+                            text: 'Sold',
+                            value: 'Sold',
+                        },
+                        {
+                            text: 'Repair in waiting',
+                            value: 'Repair in waiting',
+                        },
+                        {
+                            text: 'Repairing',
+                            value: 'Repairing',
+                        },
+                        {
+                            text: 'Repaired',
+                            value: 'Repaired',
+                        },
+                        {
+                            text: 'Recalling',
+                            value: 'Recalling',
+                        },
+                        {
+                            text: 'Recalled',
+                            value: 'Recalled',
+                        },
+                        {
+                            text: 'Returned',
+                            value: 'Returned',
+                        },
+                    ],
+                    filteredValue: filteredInfo.status || null,
+                    onFilter: (value, record) => record.status === value,
+                },
+                {
+                    title: 'Quantity',
+                    dataIndex: 'count',
+                },
+                {
+                    title: 'Percentage in Model',
+                    dataIndex: 'percentInAllModel',
+                },
+            ];
+            const tableData = [];
+            for (let i = 0; i < models.length; i++) {
+                for (let j = 0; j < 10; j++) {
+                    if (allStatus[i].status[j].count !== 0) {
+                        tableData.push({
+                            model: models[i],
+                            status: allStatus[i].status[j].status,
+                            count: allStatus[i].status[j].count,
+                            percentInAllModel: allStatus[i].status[j].percentInAllModel + '%',
+                        });
+                    }
+                }
+            }
+            setColumns(columns);
+            setDataSource(tableData);
+        }
+    };
+
+    const convertStatus = (status) => {
+        switch (status) {
+            case 1:
+                return 'New product';
+            case 2:
+                return 'On sale';
+            case 3:
+                return 'Sold';
+            case 4:
+                return 'Repair in waiting';
+            case 5:
+                return 'Repairing';
+            case 6:
+                return 'Repaired';
+            case 7:
+                return 'Recalling';
+            case 8:
+                return 'Recalled';
+            case 9:
+                return 'Returned';
+            default:
+                return 'Shipping';
+        }
+    };
+
+    const indexToColor = (index) => {
+        switch (index) {
+            case 1:
+                return 'rgba(245, 39, 195, 0.8)';
+            case 2:
+                return 'rgba(240, 195, 39, 0.8)';
+            case 3:
+                return 'rgba(178, 39, 245, 0.8)';
+            case 4:
+                return 'rgba(39, 145, 245, 0.8)';
+            case 5:
+                return 'rgba(245, 39, 106, 0.8)';
+            case 6:
+                return 'rgba(39, 67, 245, 0.8)';
+            case 7:
+                return 'rgba(39, 175, 245, 0.8)';
+            case 8:
+                return 'rgba(243, 245, 39, 0.8)';
+            case 9:
+                return 'rgba(245, 39, 39, 0.9)';
+            default:
+                return 'rgba(49, 39, 245, 0.9)';
+        }
+    };
     
 
     return (
@@ -256,8 +580,10 @@ const statistics = () => {
                         <Select.Option value="Products in storage">
                             Products in storage
                         </Select.Option>
-                        <Select.Option value="iPad Production">iPad Production</Select.Option>
-                        <Select.Option value="MacBook Production">MacBook Production</Select.Option>
+                        <Select.Option value="Statistic sold products">
+                            Statistic sold products
+                        </Select.Option>
+                        <Select.Option value="Product by status">Product by status</Select.Option>
                     </Select>
                 </div>
 
