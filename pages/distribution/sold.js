@@ -5,7 +5,7 @@ import { useRouter } from 'next/router';
 
 import { Button, Table, Modal, Form, Input, Select, Checkbox } from 'antd';
 import { MdErrorOutline } from 'react-icons/md';
-import { getSelledProducts, sellProduct } from '~/redux/actions/productAction';
+import { getSelledProducts, recallErrorProduct, sellProduct } from '~/redux/actions/productAction';
 import { createNewCustomer, getAllCustomers } from '~/redux/actions/customerAction';
 import { getAllStorages } from '~/redux/actions/storageAction';
 
@@ -50,14 +50,14 @@ const selled = () => {
             case 9:
                 return 'Returned';
             default:
-                return 'Shipping';
+                return 'Shipping to warranty';
         }
     };
 
     const dataSource = product.selled_products?.map((data) => {
         const s = convertStatus(data.status);
         return {
-            id: data.id,
+            id: data.product_id,
             status: s,
             customer: customer.customers[data.customer_id - 1]?.email,
             product_line: data.product_line,
@@ -129,9 +129,9 @@ const selled = () => {
                 product_id: productId,
                 storage_id: storageData,
             };
-            console.log(data);
+            dispatch(recallErrorProduct({ auth, data }));
         }
-        //router.reload();
+        router.push('warehouse/');
         setIsSellModalOpen(false);
     };
 

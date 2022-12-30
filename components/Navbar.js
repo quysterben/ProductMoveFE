@@ -65,10 +65,10 @@ const Navbar = () => {
                             <p className="text-color1 w-full text-center">Warehouse</p>
                         </li>
                         <li className="mx-16 hover:cursor-pointer w-[80px] hover:bg-color3">
-                            <Link href="/distribution/selled">
+                            <Link href="/distribution/sold">
                                 <FaPeopleCarry className="text-color1 h-8 w-8 mt-2 ml-6 hover:text-color1" />
                             </Link>
-                            <p className="text-color1 w-full text-center">Selled</p>
+                            <p className="text-color1 w-full text-center">Sold</p>
                         </li>
                         <li className="mx-16 hover:cursor-pointer w-[80px] hover:bg-color3">
                             <Link href="/distribution/pending">

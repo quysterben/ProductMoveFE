@@ -82,3 +82,41 @@ export const getSelledProducts =
             });
         }
     };
+
+export const recallErrorProduct =
+    ({ auth, data }) =>
+    async (dispatch) => {
+        try {
+            const res = await postDataAPI(`distribution/receive/`, data, auth.token);
+            dispatch({
+                type: PRODUCT.RECALL_ERROR_PRODUCT,
+                payload: res.data,
+            });
+        } catch (err) {
+            dispatch({
+                type: ALERT,
+                payload: {
+                    error: 'recall product data failed!',
+                },
+            });
+        }
+    };
+
+export const returnProductToCustomer =
+    ({ auth, data }) =>
+    async (dispatch) => {
+        try {
+            const res = await postDataAPI(`distribution/return-customer`, data, auth.token);
+            dispatch({
+                type: PRODUCT.RETURN_CUSTOMER,
+                payload: res,
+            });
+        } catch (err) {
+            dispatch({
+                type: ALERT,
+                payload: {
+                    error: 'return product failed!',
+                },
+            });
+        }
+    };

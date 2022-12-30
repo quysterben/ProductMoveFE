@@ -5,15 +5,18 @@ import { useRouter } from 'next/router';
 
 import { Button, Table, Modal, Form, Input, Select, Checkbox } from 'antd';
 import { TiShoppingCart } from 'react-icons/ti';
-import { getProductsData, sellProduct } from '~/redux/actions/productAction';
+import { CiDeliveryTruck } from 'react-icons/ci';
+import { GiReturnArrow } from 'react-icons/gi';
+import {
+    getProductsData,
+    returnProductToCustomer,
+    sellProduct,
+} from '~/redux/actions/productAction';
 import { getAllModels } from '~/redux/actions/modelActions';
 import { getAllStorages } from '~/redux/actions/storageAction';
 import { getAllUsers } from '~/redux/actions/userAction';
-import {
-    createNewCustomer,
-    createNewCustomerAndSell,
-    getAllCustomers,
-} from '~/redux/actions/customerAction';
+import { createNewCustomerAndSell, getAllCustomers } from '~/redux/actions/customerAction';
+import { deliveryLot } from '~/redux/actions/lotAction';
 
 const warehouse = () => {
     const { auth, lot, product, model, storage, user, customer } = useSelector((state) => state);
@@ -62,7 +65,7 @@ const warehouse = () => {
         }
     };
 
-    const dataSource = product.products.map((data) => {
+    const dataSource = product.products?.map((data) => {
         const s = convertStatus(data.status);
         return {
             ...data,
@@ -70,7 +73,7 @@ const warehouse = () => {
         };
     });
     const lotsData = product.products
-        .map((param) => param.lot_number)
+        ?.map((param) => param.lot_number)
         .filter((e, i, a) => a.indexOf(e) === i);
 
     const columns = [
@@ -117,10 +120,22 @@ const warehouse = () => {
             key: 'action',
             render: (record) => (
                 <div>
-                    <TiShoppingCart
-                        className="mr-4 h-6 w-6 text-color4 hover:text-color2 hover:cursor-pointer"
-                        onClick={() => handleShowModal(record.id)}
-                    />
+                    {record.status === 'Repair in waiting' ? (
+                        <CiDeliveryTruck
+                            className="mr-4 h-6 w-6 text-color4 hover:text-color2 hover:cursor-pointer"
+                            onClick={() => handleShowDeliveryModel(record.id)}
+                        />
+                    ) : record.status === 'Repaired' ? (
+                        <GiReturnArrow
+                            className="mr-4 h-6 w-6 text-color4 hover:text-color2 hover:cursor-pointer"
+                            onClick={() => handleReturnToCustomer(record.id)}
+                        />
+                    ) : (
+                        <TiShoppingCart
+                            className="mr-4 h-6 w-6 text-color4 hover:text-color2 hover:cursor-pointer"
+                            onClick={() => handleShowModal(record.id)}
+                        />
+                    )}
                 </div>
             ),
         },
@@ -154,12 +169,50 @@ const warehouse = () => {
             const data = { email: customerEmail.current.input.value };
             dispatch(createNewCustomerAndSell({ auth, data, product_id: productId }));
         }
-        router.reload();
+        router.push('sold');
         setIsSellModalOpen(false);
     };
 
     const handleCancel = () => {
         setIsSellModalOpen(false);
+    };
+
+    //Delivery modal
+    const [isDeliveryModalOpen, setIsDeliveryModalOpen] = useState(false);
+    const [warrantyData, setWarrantyData] = useState('');
+
+    const handleShowDeliveryModel = (value) => {
+        setProductId(value);
+        setIsDeliveryModalOpen(true);
+    };
+
+    const handleDeliveryModalOk = () => {
+        if (true) {
+            const data = {
+                product_id: productId,
+                to: warrantyData,
+            };
+            dispatch(deliveryLot({ auth, data }));
+            setIsDeliveryModalOpen(false);
+            router.push('pending');
+        }
+    };
+
+    const handleDeliveryModalCancel = () => {
+        setIsDeliveryModalOpen(false);
+    };
+
+    const handleChangeWarrantyData = (value) => {
+        setWarrantyData(value);
+    };
+
+    //return to customer
+    const handleReturnToCustomer = (id) => {
+        const data = {
+            product_id: id,
+        };
+        router.push('sold');
+        dispatch(returnProductToCustomer({ auth, data }));
     };
 
     return (
@@ -204,6 +257,34 @@ const warehouse = () => {
                 >
                     <Form.Item label="Email" name="Email">
                         <Input ref={customerEmail} />
+                    </Form.Item>
+                </Form>
+            </Modal>
+            <Modal
+                title="Delivery To Warranty"
+                visible={isDeliveryModalOpen}
+                onOk={handleDeliveryModalOk}
+                onCancel={handleDeliveryModalCancel}
+            >
+                <Form
+                    name="deliveryData"
+                    labelCol={{ span: 8 }}
+                    wrapperCol={{ span: 16 }}
+                    autoComplete="off"
+                >
+                    <Form.Item name="Store" label="To Warranty">
+                        <Select
+                            placeholder="Select warranty"
+                            onChange={handleChangeWarrantyData}
+                            allowClear
+                        >
+                            {user.users.map(
+                                (param) =>
+                                    param.role === 'warranty' && (
+                                        <Option value={param.id}>{param.name} </Option>
+                                    ),
+                            )}
+                        </Select>
                     </Form.Item>
                 </Form>
             </Modal>

@@ -18,6 +18,10 @@ const productReducer = (state = initialState, action) => {
                 ...state,
                 selled_products: action.payload,
             };
+        case PRODUCT.RECALL_ERROR_PRODUCT:
+            return action.payload;
+        case PRODUCT.RETURN_CUSTOMER:
+            return action.payload;
         default:
             return state;
     }

@@ -123,7 +123,7 @@ const pending = () => {
             };
             dispatch(receiveLot({ auth, data }));
             setIsReceivedModalOpen(false);
-            router.reload();
+            router.push('warehouse/');
         }
     };
 

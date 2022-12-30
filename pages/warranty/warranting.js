@@ -115,7 +115,7 @@ const warehouse = () => {
                 <div>
                     <CiDeliveryTruck
                         className="mr-4 h-6 w-6 text-color4 hover:text-color2 hover:cursor-pointer"
-                        onClick={() => handleShowDeliveryModel(record.lot_number)}
+                        onClick={() => handleShowDeliveryModel(record.id)}
                     >
                         Delivery
                     </CiDeliveryTruck>
@@ -138,21 +138,22 @@ const warehouse = () => {
     //Delivery modal
     const [isDeliveryModalOpen, setIsDeliveryModalOpen] = useState(false);
     const [storeData, setStoreData] = useState('');
+    const [productId, setProductId] = useState();
 
     const handleShowDeliveryModel = (value) => {
-        dispatch(getLotData({ auth, data: value }));
         setIsDeliveryModalOpen(true);
+        setProductId(value);
     };
 
     const handleDeliveryModalOk = () => {
         if (true) {
             const data = {
-                lot_number: lot.lot[0]?.id,
+                product_id: productId,
                 to: storeData,
             };
             dispatch(deliveryLot({ auth, data }));
             setIsDeliveryModalOpen(false);
-            router.reload();
+            router.push('pending');
         }
     };
 
@@ -179,15 +180,6 @@ const warehouse = () => {
                     wrapperCol={{ span: 16 }}
                     autoComplete="off"
                 >
-                    <Form.Item label="id" name="Lot Id">
-                        <Input disabled placeholder={lot.lot[0]?.id} />
-                    </Form.Item>
-                    <Form.Item label="model" name="Model">
-                        <Input disabled placeholder={lot.lot[0]?.model} />
-                    </Form.Item>
-                    <Form.Item label="amount" name="Amount">
-                        <Input disabled placeholder={lot.lot[0]?.amount} />
-                    </Form.Item>
                     <Form.Item name="Store" label="To Store">
                         <Select placeholder="Select store" onChange={handleChangeStore} allowClear>
                             {user.users.map(

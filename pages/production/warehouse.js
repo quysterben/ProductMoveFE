@@ -12,7 +12,9 @@ import { getAllStorages } from '~/redux/actions/storageAction';
 import { getAllUsers } from '~/redux/actions/userAction';
 
 const warehouse = () => {
-    const { auth, lot, product, model, storage, user, deliveredlot } = useSelector((state) => state);
+    const { auth, lot, product, model, storage, user, deliveredlot } = useSelector(
+        (state) => state,
+    );
     const dispatch = useDispatch();
     const router = useRouter();
 
@@ -34,35 +36,35 @@ const warehouse = () => {
 
     const convertStatus = (status) => {
         switch (status) {
-            case 1: 
-                return 'New product'
-            case 2: 
-                return 'On sale'
-            case 3: 
-                return 'Sold'
-            case 4: 
-                return 'Repair in waiting'
-            case 5: 
-                return 'Repairing'
-            case 6: 
-                return 'Repaired'
-            case 7: 
-                return 'Recalling'
-            case 8: 
-                return 'Recalled'
-            case 9: 
-                return 'Returned'
-            default: 
-                return 'Shipping'
+            case 1:
+                return 'New product';
+            case 2:
+                return 'On sale';
+            case 3:
+                return 'Sold';
+            case 4:
+                return 'Repair in waiting';
+            case 5:
+                return 'Repairing';
+            case 6:
+                return 'Repaired';
+            case 7:
+                return 'Recalling';
+            case 8:
+                return 'Recalled';
+            case 9:
+                return 'Returned';
+            default:
+                return 'Shipping';
         }
-    }
+    };
 
-    const dataSource = product.products.map(data => {
-        const s = convertStatus(data.status)
+    const dataSource = product.products.map((data) => {
+        const s = convertStatus(data.status);
         return {
             ...data,
-            status: s
-        }
+            status: s,
+        };
     });
     const lotsData = product.products
         .map((param) => param.lot_number)
@@ -140,7 +142,6 @@ const warehouse = () => {
         setIsModalOpen(true);
     };
 
-
     const handleOk = () => {
         if (validate()) {
             const data = {
@@ -195,9 +196,9 @@ const warehouse = () => {
                 lot_number: lot.lot[0]?.id,
                 to: storeData,
             };
+            router.reload();
             dispatch(deliveryLot({ auth, data }));
             setIsDeliveryModalOpen(false);
-            router.reload();
         }
     };
 
@@ -262,13 +263,13 @@ const warehouse = () => {
                     autoComplete="off"
                 >
                     <Form.Item label="id" name="Lot Id">
-                        <Input disabled placeholder={lot.lot[0]?.id} />
+                        <Input disabled placeholder={lot?.lot[0]?.id} />
                     </Form.Item>
                     <Form.Item label="model" name="Model">
-                        <Input disabled placeholder={lot.lot[0]?.model} />
+                        <Input disabled placeholder={lot?.lot[0]?.model} />
                     </Form.Item>
                     <Form.Item label="amount" name="Amount">
-                        <Input disabled placeholder={lot.lot[0]?.amount} />
+                        <Input disabled placeholder={lot?.lot[0]?.amount} />
                     </Form.Item>
                     <Form.Item name="Store" label="To Store">
                         <Select placeholder="Select store" onChange={handleChangeStore} allowClear>

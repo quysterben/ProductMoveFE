@@ -7,6 +7,7 @@ import { useRouter } from 'next/router';
 import { Button, Table, Modal, Form, Input, Select } from 'antd';
 import { AiFillEdit, AiFillDelete } from 'react-icons/ai';
 import { createNewStorage } from '~/redux/actions/storageAction';
+import Swal from 'sweetalert2';
 
 const manegement = () => {
     const { auth, user } = useSelector((state) => state);
@@ -181,6 +182,10 @@ const manegement = () => {
         };
         dispatch(createNewStorage({ auth, data }));
         setIsStorageModalOpen(false);
+        Swal.fire({
+            icon: 'success',
+            title: 'Create storage success!',
+        });
     };
 
     const handleCancelStorageModal = () => {
