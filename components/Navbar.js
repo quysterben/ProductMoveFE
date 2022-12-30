@@ -4,7 +4,7 @@ import { HiUserGroup, HiWrenchScrewdriver } from 'react-icons/hi2';
 import { MdCategory, MdPendingActions } from 'react-icons/md';
 import { ImStatsDots } from 'react-icons/im';
 import { Button } from 'antd';
-import { FaWarehouse } from 'react-icons/fa';
+import { FaWarehouse, FaPeopleCarry } from 'react-icons/fa';
 import Link from 'next/link';
 import { logout } from '~/redux/actions/authAction';
 
@@ -63,6 +63,12 @@ const Navbar = () => {
                                 <FaWarehouse className="text-color1 h-8 w-8 mt-2 ml-6 hover:text-color1" />
                             </Link>
                             <p className="text-color1 w-full text-center">Warehouse</p>
+                        </li>
+                        <li className="mx-16 hover:cursor-pointer w-[80px] hover:bg-color3">
+                            <Link href="/distribution/selled">
+                                <FaPeopleCarry className="text-color1 h-8 w-8 mt-2 ml-6 hover:text-color1" />
+                            </Link>
+                            <p className="text-color1 w-full text-center">Selled</p>
                         </li>
                         <li className="mx-16 hover:cursor-pointer w-[80px] hover:bg-color3">
                             <Link href="/distribution/pending">

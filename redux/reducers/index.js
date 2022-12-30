@@ -7,6 +7,7 @@ import userReducer from './userReducer';
 import lotReducer from './lotReducer';
 import storageReducer from './storageReducer';
 import deliveryReducer from './deliveryReducer';
+import customerReducer from './customerReducer';
 
 export default combineReducers({
     alert: alertReducer,
@@ -17,4 +18,5 @@ export default combineReducers({
     lot: lotReducer,
     storage: storageReducer,
     delivery: deliveryReducer,
+    customer: customerReducer,
 });

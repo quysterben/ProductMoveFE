@@ -44,3 +44,41 @@ export const receiveProduct =
             });
         }
     };
+
+export const sellProduct =
+    ({ auth, data }) =>
+    async (dispatch) => {
+        try {
+            const res = await postDataAPI(`distribution/sales/`, data, auth.token);
+            dispatch({
+                type: PRODUCT.SELL_PRODUCT,
+                payload: res,
+            });
+        } catch (err) {
+            dispatch({
+                type: ALERT,
+                payload: {
+                    error: 'Sell product data failed!',
+                },
+            });
+        }
+    };
+
+export const getSelledProducts =
+    ({ auth, data }) =>
+    async (dispatch) => {
+        try {
+            const res = await getDataAPI(`distribution/sales/`, auth.token);
+            dispatch({
+                type: PRODUCT.GET_SELLED_PRODUCT,
+                payload: res.data,
+            });
+        } catch (err) {
+            dispatch({
+                type: ALERT,
+                payload: {
+                    error: 'Sell product data failed!',
+                },
+            });
+        }
+    };

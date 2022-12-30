@@ -13,6 +13,11 @@ const productReducer = (state = initialState, action) => {
             };
         case PRODUCT.SELL_PRODUCT:
             return action.payload;
+        case PRODUCT.GET_SELLED_PRODUCT:
+            return {
+                ...state,
+                selled_products: action.payload,
+            };
         default:
             return state;
     }

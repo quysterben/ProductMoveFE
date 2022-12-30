@@ -9,14 +9,10 @@ import { getProductsData, sellProduct } from '~/redux/actions/productAction';
 import { getAllModels } from '~/redux/actions/modelActions';
 import { getAllStorages } from '~/redux/actions/storageAction';
 import { getAllUsers } from '~/redux/actions/userAction';
-import {
-    createNewCustomer,
-    createNewCustomerAndSell,
-    getAllCustomers,
-} from '~/redux/actions/customerAction';
+import { createNewCustomer, getAllCustomers } from '~/redux/actions/customerAction';
 
-const warehouse = () => {
-    const { auth, lot, product, model, storage, user, customer } = useSelector((state) => state);
+const selled = () => {
+    const { auth, product, customer } = useSelector((state) => state);
     const dispatch = useDispatch();
     const router = useRouter();
 
@@ -152,7 +148,14 @@ const warehouse = () => {
             dispatch(sellProduct({ auth, data }));
         } else {
             const data = { email: customerEmail.current.input.value };
-            dispatch(createNewCustomerAndSell({ auth, data, product_id: productId }));
+            dispatch(createNewCustomer({ auth, data }));
+            setTimeout(() => {
+                const data = {
+                    product_id: productId,
+                    customer_id: customer.customers[customer.customers.length - 1].id,
+                };
+                dispatch(sellProduct({ auth, data }));
+            }, 1000);
         }
         router.reload();
         setIsSellModalOpen(false);
@@ -233,4 +236,4 @@ const warehouse = () => {
     );
 };
 
-export default warehouse;
+export default selled;
