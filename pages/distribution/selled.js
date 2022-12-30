@@ -102,10 +102,12 @@ const selled = () => {
             key: 'action',
             render: (record) => (
                 <div>
-                    <MdErrorOutline
-                        className="mr-4 h-6 w-6 text-color4 hover:text-color2 hover:cursor-pointer"
-                        onClick={() => handleShowModal(record.id)}
-                    />
+                    {record.status === 'Sold' && (
+                        <MdErrorOutline
+                            className="mr-4 h-6 w-6 text-color4 hover:text-color2 hover:cursor-pointer"
+                            onClick={() => handleShowModal(record.id)}
+                        />
+                    )}
                 </div>
             ),
         },
