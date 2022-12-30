@@ -10,6 +10,9 @@ import autocolors from 'chartjs-plugin-autocolors';
 import { lots, products } from '~/testdata';
 import { AiOutlineBarChart, AiOutlineTable } from 'react-icons/ai';
 import { getProductsData } from '~/redux/actions/productAction';
+import { getLotData } from '~/redux/actions/lotAction';
+import { data } from 'autoprefixer';
+
 const statistics = () => {
     const { auth, model, lot, product } = useSelector((state) => state);
     const dispatch = useDispatch();
@@ -19,38 +22,44 @@ const statistics = () => {
     const chart2 = useRef('');
     const chart3 = useRef('');
     const chart4 = useRef('');
+    const chart5 = useRef('');
 
-    const [filteredInfo, setFilteredInfo] = useState({})
-    
+    const [filteredInfo, setFilteredInfo] = useState({});
+
     const handleTableChange = (pagination, filters, sorter) => {
-        setFilteredInfo(filters)
+        setFilteredInfo(filters);
         // doStatistic(statistic)
         // console.log(filteredInfo)
-    }
+    };
 
     useEffect(() => {
-        doStatistic(statistic)
-    },[filteredInfo])
+        console.log(filteredInfo)
+        doStatistic(statistic);
+    }, [filteredInfo]);
 
+    const allLots = [];
     useEffect(() => {
         const loggedIn = localStorage.getItem('loggedIn');
         if (loggedIn !== 'true') {
             router.push('/login');
         }
         dispatch(getAllModels({ auth }));
-        // dispatch(getLotData({ auth, data:1 }))
         dispatch(getProductsData({ auth }));
     }, [dispatch, auth]);
 
     const lotsData = product.products
-    .map((param) => param.lot_number)
-    .filter((e, i, a) => a.indexOf(e) === i);
+        .map((param) => param.lot_number)
+        .filter((item, pos, self) => self.indexOf(item) === pos);
+
+    const allProducts = product.products;
+    // console.log(allProducts)
 
     Chart.register(autocolors);
     const [myChart1, setMyChart1] = useState();
     const [myChart2, setMyChart2] = useState();
     const [myChart3, setMyChart3] = useState();
     const [myChart4, setMyChart4] = useState();
+    const [myChart5, setMyChart5] = useState();
 
     const [columns, setColumns] = useState([]);
     const [dataSource, setDataSource] = useState([]);
@@ -71,11 +80,13 @@ const statistics = () => {
         setTableStatistic(true);
     }
 
+    // <------------Change statistics------------------>
     useEffect(() => {
         resetCharts();
         doStatistic(statistic);
     }, [statistic]);
 
+    // <------------Change type statistic------------------>
     useEffect(() => {
         if (statistic !== '') {
             if (tableStatistic) {
@@ -94,6 +105,10 @@ const statistics = () => {
                 break;
             case 'Production':
                 productsStatistics();
+                break;
+            case 'Status of Products':
+                statusOfProducts();
+                break;
         }
     }
 
@@ -116,6 +131,11 @@ const statistics = () => {
         if (myChart4 !== undefined) {
             if (myChart4.ctx !== null) {
                 myChart4.destroy();
+            }
+        }
+        if (myChart5 !== undefined) {
+            if (myChart5.ctx !== null) {
+                myChart5.destroy();
             }
         }
     }
@@ -195,8 +215,8 @@ const statistics = () => {
                     },
                 ],
             };
-            setMyChart1(
-                new Chart(chart1.current, {
+            setMyChart5(
+                new Chart(chart5.current, {
                     type: 'bar',
                     data: modelChartData,
                 }),
@@ -207,11 +227,11 @@ const statistics = () => {
     // <----------------Products Statistic-------------------->
 
     const productsStatistics = () => {
-        console.log(lotsData)
+        // console.log(lotsData);
         if (tableStatistic) {
-            const curData = getModelSta('iPhone', 'TABLE')
-                .concat(getModelSta('iPad', 'TABLE'))
-                .concat(getModelSta('MacBook', 'TABLE'));
+            const curData = getModelSta('iphone', 'TABLE')
+                .concat(getModelSta('ipad', 'TABLE'))
+                .concat(getModelSta('macintosh', 'TABLE'));
             setDataSource(curData);
             const curColumns = [
                 {
@@ -226,15 +246,15 @@ const statistics = () => {
                     filters: [
                         {
                             text: 'iphone',
-                            value: 'iPhone'
+                            value: 'iPhone',
                         },
                         {
                             text: 'ipad',
-                            value: 'iPad'
+                            value: 'iPad',
                         },
                         {
                             text: 'macintosh',
-                            value: 'MacBook'
+                            value: 'MacBook',
                         },
                     ],
                     filteredValue: filteredInfo.product_line || null,
@@ -249,13 +269,14 @@ const statistics = () => {
             setColumns(curColumns);
         } else {
             resetCharts();
-            const numberOfIphone = products.filter(
+            // console.log(products)
+            const numberOfIphone = allProducts.filter(
                 (product) => product.product_line === 'iphone',
             ).length;
-            const numberOfIpad = products.filter(
+            const numberOfIpad = allProducts.filter(
                 (product) => product.product_line === 'ipad',
             ).length;
-            const numberOfMac = products.filter(
+            const numberOfMac = allProducts.filter(
                 (product) => product.product_line === 'macintosh',
             ).length;
 
@@ -283,7 +304,7 @@ const statistics = () => {
             setMyChart2(
                 new Chart(chart2.current, {
                     type: 'bar',
-                    data: getModelSta('iPhone', 'CHART'),
+                    data: getModelSta('iphone', 'CHART'),
                     options: {
                         plugins: {
                             autocolors: {
@@ -296,7 +317,7 @@ const statistics = () => {
             setMyChart3(
                 new Chart(chart3.current, {
                     type: 'bar',
-                    data: getModelSta('iPad', 'CHART'),
+                    data: getModelSta('ipad', 'CHART'),
                     options: {
                         plugins: {
                             autocolors: {
@@ -309,7 +330,7 @@ const statistics = () => {
             setMyChart4(
                 new Chart(chart4.current, {
                     type: 'bar',
-                    data: getModelSta('MacBook', 'CHART'),
+                    data: getModelSta('macintosh', 'CHART'),
                     options: {
                         plugins: {
                             autocolors: {
@@ -322,53 +343,35 @@ const statistics = () => {
         }
     };
 
-    const getModelSta = (product_line, typeSta) => {
-        const lotsFilter = lots.filter((lot) => lot.model.includes(product_line));
-        var labels = [];
-        const allName = lotsFilter.map((p) => p.model);
-        for (let i = 0; i < allName.length; i++) {
-            if (labels.find((l) => l === allName[i]) === undefined) {
-                labels.push(allName[i]);
-            }
-        }
+    const getModelSta = (product, typeSta) => {
+        const notFilterLabel = allProducts.filter((p) => p.product_line === product);
+        const labels = notFilterLabel.filter(
+            (value, index, self) => index === self.findIndex((t) => t.model === value.model),
+        );
+
+        // console.log(labels);
+        // .filter((item, pos, self) => self.indexOf(item) === pos);
 
         const datas = [];
         for (let i = 0; i < labels.length; i++) {
-            const arrayFullName = lotsFilter
-                .filter((p) => p.model === labels[i])
-                .map((p) => p.amount);
-            datas.push(arrayFullName.reduce((a, b) => a + b, 0));
+            let sum = 0;
+            for (let j = 0; j < allProducts.length; j++) {
+                // console.log(allProducts[j].model)
+                // console.log(labels[i])
+                if (allProducts[j].model === labels[i].model) {
+                    sum++;
+                }
+            }
+            datas.push(sum);
         }
 
-        const returnData =
-            typeSta === 'CHART'
-                ? {
-                      labels: labels,
-                      datasets: [
-                          {
-                              label: `Amount of ${product_line}s produced`,
-                              data: datas,
-                          },
-                      ],
-                  }
-                : () => {
-                      const tableData = [];
-                      for (let i = 0; i < labels.length; i++) {
-                          tableData.push({
-                              model: labels[i],
-                              product_line: product_line,
-                              amount: datas[i],
-                          });
-                      }
-                      return tableData;
-                  };
-
+        let returnData;
         if (typeSta === 'CHART') {
             returnData = {
-                labels: labels,
+                labels: labels.map((l) => l.model),
                 datasets: [
                     {
-                        label: `Amount of ${product_line}s produced`,
+                        label: `Amount of ${product}s produced`,
                         data: datas,
                     },
                 ],
@@ -377,8 +380,8 @@ const statistics = () => {
             const tableData = [];
             for (let i = 0; i < labels.length; i++) {
                 tableData.push({
-                    model: labels[i],
-                    product_line: product_line,
+                    model: labels[i].model,
+                    product_line: product,
                     amount: datas[i],
                 });
             }
@@ -387,6 +390,212 @@ const statistics = () => {
 
         return returnData;
     };
+
+    //<----------------Status of all pruduct-------------------->
+    const fakeProducts1 = allProducts.map((e) => {
+        return {
+            ...e,
+            status: Math.floor(Math.random() * 10),
+        };
+    });
+
+    const statusOfProducts = () => {
+        // console.log('this is ran')
+        const models = fakeProducts1
+            .map((param) => param.model)
+            .filter((item, pos, self) => self.indexOf(item) === pos);
+        let allStatus = [];
+        for (let i = 0; i < models.length; i++) {
+            //model: models[i]
+            // console.log(i)
+            let newObject = {
+                name: models[i],
+                status: [],
+            };
+            const total = fakeProducts1.filter((p) => p.model === models[i]).length;
+            for (let j = 0; j < 10; j++) {
+                let count = 0;
+                count = fakeProducts1.filter((p) => p.status === j && p.model === models[i]).length;
+                // console.log(count)
+                newObject.status.push({
+                    status: convertStatus(j),
+                    count: count,
+                    percentInAllModel: Math.round((count / total) * 100),
+                });
+            }
+            allStatus.push(newObject);
+            // console.log(allStatus)
+        }
+        let tableData;
+        if (!tableStatistic) {
+            let datasets = [];
+            for (let i = 0; i < 10; i++) {
+                datasets.push({
+                    label: allStatus[1].status[i].status,
+                    backgroundColor: indexToColor(i),
+                    data: allStatus.map((e) => e.status[i].count),
+                });
+            }
+            const chartData = {
+                type: 'bar',
+                data: {
+                    labels: models,
+                    datasets: datasets,
+                },
+                options: {
+                    tooltipss: {
+                        enable: true,
+                        mode: 'single',
+                        callbacks: {
+                            label: function (tooltipItems, data) {
+                                return (
+                                    data.datasets[tooltipItems.datasetIndex].label +
+                                    ': ' +
+                                    tooltipItems.xLabel +
+                                    ' %'
+                                );
+                            },
+                        },
+                    },
+                },
+            };
+            setMyChart5(new Chart(chart5.current, chartData));
+        } else {
+            const filterModel = models.map((e) => {
+                return { value: e, text: e };
+            });
+            const columns = [
+                {
+                    title: 'Model',
+                    dataIndex: 'model',
+                    filters: filterModel,
+                    filteredValue: filteredInfo.model || null,
+                    onFilter: (value, record) => record.model === value,
+                },
+                {
+                    title: 'Status',
+                    dataIndex: 'status',
+                    filters: [
+                        {
+                            text: 'Shipping',
+                            value: 'Shipping',
+                        },
+                        {
+                            text: 'New product',
+                            value: 'New product',
+                        },
+                        {
+                            text: 'On Sale',
+                            value: 'On Sale',
+                        },
+                        {
+                            text: 'Sold',
+                            value: 'Sold',
+                        },
+                        {
+                            text: 'Repair in waiting',
+                            value: 'Repair in waiting',
+                        },
+                        {
+                            text: 'Repairing',
+                            value: 'Repairing',
+                        },
+                        {
+                            text: 'Repaired',
+                            value: 'Repaired',
+                        },
+                        {
+                            text: 'Recalling',
+                            value: 'Recalling',
+                        },
+                        {
+                            text: 'Recalled',
+                            value: 'Recalled',
+                        },
+                        {
+                            text: 'Returned',
+                            value: 'Returned',
+                        },
+                    ],
+                    filteredValue: filteredInfo.status || null,
+                    onFilter: (value, record) => record.status === value,
+                },
+                {
+                    title: 'Quantity',
+                    dataIndex: 'count',
+                },
+                {
+                    title: 'Percentage in Model',
+                    dataIndex: 'percentInAllModel',
+                },
+            ];
+            const tableData = [];
+            for (let i = 0; i < models.length; i++) {
+                for (let j = 0; j < 10; j++) {
+                    tableData.push({
+                        model: models[i],
+                        status: allStatus[i].status[j].status,
+                        count: allStatus[i].status[j].count,
+                        percentInAllModel: allStatus[i].status[j].percentInAllModel + '%',
+                    });
+                }
+            }
+            setColumns(columns);
+            setDataSource(tableData);
+        }
+    };
+
+    const convertStatus = (status) => {
+        switch (status) {
+            case 1:
+                return 'New product';
+            case 2:
+                return 'On sale';
+            case 3:
+                return 'Sold';
+            case 4:
+                return 'Repair in waiting';
+            case 5:
+                return 'Repairing';
+            case 6:
+                return 'Repaired';
+            case 7:
+                return 'Recalling';
+            case 8:
+                return 'Recalled';
+            case 9:
+                return 'Returned';
+            default:
+                return 'Shipping';
+        }
+    };
+
+    const indexToColor = (index) => {
+        switch (index) {
+            case 1:
+                return 'rgba(245, 39, 195, 0.8)';
+            case 2:
+                return 'rgba(240, 195, 39, 0.8)';
+            case 3:
+                return 'rgba(178, 39, 245, 0.8)';
+            case 4:
+                return 'rgba(39, 145, 245, 0.8)';
+            case 5:
+                return 'rgba(245, 39, 106, 0.8)';
+            case 6:
+                return 'rgba(39, 67, 245, 0.8)';
+            case 7:
+                return 'rgba(39, 175, 245, 0.8)';
+            case 8:
+                return 'rgba(243, 245, 39, 0.8)';
+            case 9:
+                return 'rgba(245, 39, 39, 0.9)';
+            default:
+                return 'rgba(49, 39, 245, 0.9)';
+        }
+    };
+
+    //<----------------Status of all pruduct-------------------->
 
     return (
         <div>
@@ -397,6 +606,7 @@ const statistics = () => {
                     <Select onChange={handleSelectChange} placeholder="Select Statistic" allowClear>
                         <Select.Option value="Product Model">Product Model</Select.Option>
                         <Select.Option value="Production">Production</Select.Option>
+                        <Select.Option value="Status of Products">Status of Products</Select.Option>
                     </Select>
                 </div>
 
@@ -417,24 +627,29 @@ const statistics = () => {
                             <Table
                                 columns={columns}
                                 dataSource={dataSource}
-                                bordered = {true}
+                                bordered={true}
                                 onChange={handleTableChange}
                                 pagination={false}
                             />
                         </div>
                     ) : (
-                        <div className="chart flex justify-center items-center flex-wrap">
-                            <div className="chart-container w-500 my-5 mx-5">
-                                <canvas ref={chart1} id="chart1"></canvas>
+                        <div>
+                            <div className="single-chart">
+                                <canvas ref={chart5} id="chart5"></canvas>
                             </div>
-                            <div className="chart-container w-500 my-5 mx-5">
-                                <canvas ref={chart2} id="chart2"></canvas>
-                            </div>
-                            <div className="chart-container w-500 my-5 mx-5">
-                                <canvas ref={chart3} id="chart3"></canvas>
-                            </div>
-                            <div className="chart-container w-500 my-5 mx-5">
-                                <canvas ref={chart4} id="chart4"></canvas>
+                            <div className="group-chart absolute left-24 top-40 flex justify-center mb-20 items-center flex-wrap">
+                                <div className="chart-container w-500 my-5 mx-5">
+                                    <canvas ref={chart1} id="chart1"></canvas>
+                                </div>
+                                <div className="chart-container w-500 my-5 mx-5">
+                                    <canvas ref={chart2} id="chart2"></canvas>
+                                </div>
+                                <div className="chart-container w-500 my-5 mx-5">
+                                    <canvas ref={chart3} id="chart3"></canvas>
+                                </div>
+                                <div className="chart-container w-500 my-5 mx-5">
+                                    <canvas ref={chart4} id="chart4"></canvas>
+                                </div>
                             </div>
                         </div>
                     )}

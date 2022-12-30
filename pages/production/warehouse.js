@@ -12,7 +12,7 @@ import { getAllStorages } from '~/redux/actions/storageAction';
 import { getAllUsers } from '~/redux/actions/userAction';
 
 const warehouse = () => {
-    const { auth, lot, product, model, storage, user } = useSelector((state) => state);
+    const { auth, lot, product, model, storage, user, deliveredlot } = useSelector((state) => state);
     const dispatch = useDispatch();
     const router = useRouter();
 
@@ -35,7 +35,6 @@ const warehouse = () => {
     const convertStatus = (status) => {
         switch (status) {
             case 1: 
-                console.log('hihihaha')
                 return 'New product'
             case 2: 
                 return 'On sale'
@@ -123,18 +122,7 @@ const warehouse = () => {
             ),
         },
     ];
-    // console.log(dataSource.map(data => {
-    //     const s = convertStatus(data.status)
-    //     return {
-    //         ...data,
-    //         status: s
-    //     }
-    // }))
-    dataSource.forEach(element => {
-        // console.log(element.status)
-        console.log(convertStatus(element.status))
-    })
-    //Produre modal
+
     const [isModalOpen, setIsModalOpen] = useState(false);
     const amountData = useRef();
     const [modelData, setModelData] = useState('');
